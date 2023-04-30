@@ -14,9 +14,18 @@ public class PlayerController : MonoBehaviour
     float camDistance;
     public float camOffset;
     public GameObject deathPanel;
+    public GameObject winPanel;
     int points;
     public TextMeshProUGUI pointsText;
     bool speedDecreasing;
+    float horizontal;
+    float vertical;
+    Rigidbody rb;
+    public Transform moveDir;
+    CharacterController character;
+    private Vector3 moveDirection;
+    public float speed;
+    private float yRotation;
 
 
     // Start is called before the first frame update
@@ -26,8 +35,35 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         camDistance = Vector3.Distance(transform.position, cam.transform.position);
         deathPanel.SetActive(false);
+        winPanel.SetActive(false);
+        rb = GetComponent<Rigidbody>();
+        character = GetComponent<CharacterController>();
+        Cursor.visible = false;
     }
 
+    void PlayerInput()
+    {
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
+    }
+
+
+    void PlayerMoveCharacterController()
+    {
+        yRotation += horizontal;
+        transform.rotation = Quaternion.Euler(0, yRotation, 0);
+
+        moveDirection = moveDir.forward * vertical;
+
+
+        character.Move(moveDirection * speed * Time.deltaTime);
+           
+    }
+
+
+
+
+    
     // Update is called once per frame
     void Update()
     {
@@ -36,38 +72,52 @@ public class PlayerController : MonoBehaviour
         playerPosition.z -= camOffset;
         cam.transform.position = playerPosition;
 
+        PlayerInput();
 
-        if (Input.GetMouseButtonDown(0))
+        PlayerMoveCharacterController();
+
+
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit hit;
+
+        //    if (Physics.Raycast(ray, out hit))
+        //    {
+        //        targetDestination.transform.position = hit.point;
+        //        agent.SetDestination(hit.point);
+        //    }
+
+
+        //}
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                targetDestination.transform.position = hit.point;
-                agent.SetDestination(hit.point);
-            }
-
-
-        }
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            agent.speed = 25;
+            speed = 100;
             
+        }
+        else
+        {
+            speed = 50;
         }
         
     }
 
+
+    //player controller 3d
+
+    
+
+    
     //Get mouse click position
-    void OnMouseDown()
-    {
-        Debug.Log("Mouse Clicked");
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10;
-        Vector3 objectPos = Camera.main.ScreenToWorldPoint(mousePos);
-        Debug.Log(objectPos);
-        agent.SetDestination(objectPos);
-    }
+    //void OnMouseDown()
+    //{
+    //    Debug.Log("Mouse Clicked");
+    //    Vector3 mousePos = Input.mousePosition;
+    //    mousePos.z = 10;
+    //    Vector3 objectPos = Camera.main.ScreenToWorldPoint(mousePos);
+    //    Debug.Log(objectPos);
+    //    agent.SetDestination(objectPos);
+    //}
 
     //Get mouse click position on ground
 
@@ -78,7 +128,9 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Player Dead");
             Destroy(other.gameObject);
             deathPanel.SetActive(true);
+            Cursor.visible = true;
             Time.timeScale = 0;
+            
         }
         if (other.gameObject.tag == "Pickup")
         {
@@ -88,13 +140,25 @@ public class PlayerController : MonoBehaviour
         }
         if (other.gameObject.tag == "DeliveryPoint")
         {
-            Debug.Log("Delivered");
-            if (other.gameObject.activeSelf)
+            
+            if (other.gameObject.activeSelf  && !other.GetComponent<DeliveryPointController>().delivered)
             {
+                Debug.Log("DeliveryPoint");
                 other.GetComponent<DeliveryPointController>().Delivered();
+                if (points < 5)
+                {
+                    points++;
+                    pointsText.text = "Score: " + points + " / 5";
+                }
+                else
+                {
+                    winPanel.SetActive(true);
+                    Cursor.visible = true;
+                    Time.timeScale = 0;
+                }
             }
-            points++;
-            pointsText.text = "Score: " + points + " / 5";
+           
+           
         }
     }
 

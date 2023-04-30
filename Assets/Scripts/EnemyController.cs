@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         StartCoroutine(WaitAndChangeDir());
+        agent.speed = Random.Range(10,15);
     }
 
     // Update is called once per frame
@@ -25,12 +26,26 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator WaitAndChangeDir()
     {
-        randomTargetPos = new Vector3(Random.Range(-50, 50), Random.Range(-50, 50), Random.Range(-50, 50));
-        agent.SetDestination(randomTargetPos);
-        yield return new WaitForSeconds(5);
+        ChangeDir();
+        yield return new WaitForSeconds(3);
         StartCoroutine(WaitAndChangeDir());
 
     }
 
-    
+    void ChangeDir()
+    {
+        randomTargetPos = new Vector3(Random.Range(-500, 500), Random.Range(-500, 500), Random.Range(-500, 500));
+        agent.SetDestination(randomTargetPos);
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //if (other.gameObject.tag == "Enemy")
+        //{
+        //    ChangeDir();
+        //}
+    }
+
+
 }

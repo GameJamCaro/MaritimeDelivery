@@ -8,16 +8,13 @@ public class PickupController : MonoBehaviour
     public GameObject deliveryPoint;
    
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    
 
     public void PickedUp()
     {
         deliveryPoint.SetActive(true);
-        gameObject.SetActive(false);
+        Destroy(gameObject);    
+        //transform.GetChild(2).gameObject.SetActive(false);
     }
     
         

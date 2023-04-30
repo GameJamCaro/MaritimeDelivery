@@ -14,8 +14,10 @@ public class CamController : MonoBehaviour
     void Start()
     {
         cam = GetComponent<Camera>();
-        cam.fieldOfView = 80;
+        //cam.fieldOfView = 80;
+    
         
+
     }
 
     // Update is called once per frame
@@ -34,7 +36,7 @@ public class CamController : MonoBehaviour
         else
         {
             cam.enabled = true;
-            mapCam.gameObject.SetActive(false);
+           // mapCam.gameObject.SetActive(false);
         }
 
 

@@ -37,6 +37,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: cup_bottom
+    second: {fileID: 2100000, guid: d66510bedd134b645a1240dc83057d7a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: cup_gold
+    second: {fileID: 2100000, guid: 8f67f13b31aca504fbf766e0e5857426, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: diamond
     second: {fileID: 2100000, guid: d5ce762f265984e4a86ce187bce47085, type: 2}
   - first:

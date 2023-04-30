@@ -7,9 +7,10 @@ public class DeliveryController : MonoBehaviour
     public GameObject[] pickups;
     public GameObject[] deliveryPoints;
     int randomPickupID;
-    int currentPickpID;
+    int currentPickupID;
     List<int> oldPickupIds;
     
+
     void Start()
     {
         oldPickupIds = new List<int>();
@@ -21,24 +22,24 @@ public class DeliveryController : MonoBehaviour
         {
             deliveryPoint.SetActive(false);
         }
-        currentPickpID = Random.Range(0, pickups.Length);
-        pickups[currentPickpID].SetActive(true);
-        oldPickupIds.Add(currentPickpID);
+        NextPickup();
 
     }
 
     public void NextPickup()
     {
-        randomPickupID = Random.Range(0, pickups.Length);
-        if (oldPickupIds.Contains(randomPickupID))
+        currentPickupID = Random.Range(0, pickups.Length);
+        if (oldPickupIds.Contains(currentPickupID))
         {
             NextPickup();
         }
         else
         {
-            currentPickpID = Random.Range(0, pickups.Length);
-            pickups[currentPickpID].SetActive(true);
-            oldPickupIds.Add(currentPickpID);
+            if (pickups[currentPickupID] != null)
+            {
+                pickups[currentPickupID].SetActive(true);
+                oldPickupIds.Add(currentPickupID);
+            }
         }
     }
 }
