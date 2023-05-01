@@ -8,34 +8,41 @@ public class EnemyController : MonoBehaviour
 {
     Vector3 randomTargetPos;
     public NavMeshAgent agent;
-    public int changeDirTime = 5;
+    public int changeDirTime = 3;
     GameObject player;
-    bool chasePlayer = false;
+    public bool chasePlayer = false;
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         agent = GetComponent<NavMeshAgent>();
+        agent.speed = Random.Range(10, 15);
+        randomTargetPos = new Vector3(Random.Range(-500, 500), Random.Range(-500, 500), Random.Range(-500, 500));
+        agent.SetDestination(randomTargetPos);
+    
         StartCoroutine(WaitAndChangeDir());
-        agent.speed = Random.Range(10,15);
+       
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if (chasePlayer)
         {
             agent.SetDestination(player.transform.position);
+        }
+        else
+        {
+            agent.SetDestination(randomTargetPos);
         }
     }
 
 
     IEnumerator WaitAndChangeDir()
     {
-        randomTargetPos = new Vector3(Random.Range(-500, 500), Random.Range(-500, 500), Random.Range(-500, 500));
-        agent.SetDestination(randomTargetPos);        
-        yield return new WaitForSeconds(3);
+       
+        yield return new WaitForSeconds(changeDirTime);
         ChangeDir();
 
 
@@ -52,17 +59,18 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.gameObject.tag == "Enemy")
-        //{
-        //    ChangeDir();
-        //}
+        if (other.gameObject.tag == "Enemy")
+        {
+            ChangeDir();
+        }
     }
 
     public void SetPlayerAsTarget()
     {
-        StopAllCoroutines();
+        //agent.SetDestination(player.transform.position);
         chasePlayer = true;
-        
+        Debug.Log("Enemy goes to Player");
+
     }
 
 

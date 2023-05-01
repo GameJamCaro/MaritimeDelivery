@@ -18,10 +18,10 @@ public class PlayerController : MonoBehaviour
     public GameObject winPanel;
     int points;
     public TextMeshProUGUI pointsText;
-    bool speedDecreasing;
+    
     float horizontal;
     float vertical;
-    Rigidbody rb;
+   
     public Transform moveDir;
     CharacterController character;
     private Vector3 moveDirection;
@@ -31,20 +31,22 @@ public class PlayerController : MonoBehaviour
     int currentLives;
     public Image[] lives;
     GameObject[] enemies;
-    
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
-        Time.timeScale = 1;
+        
         agent = GetComponent<NavMeshAgent>();
         camDistance = Vector3.Distance(transform.position, cam.transform.position);
         deathPanel.SetActive(false);
         winPanel.SetActive(false);
-        rb = GetComponent<Rigidbody>();
+       
         character = GetComponent<CharacterController>();
-        Cursor.visible = false;
+       
         currentLives = maxLives;
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
     }
@@ -135,9 +137,15 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Whale"))
         {
+
+          
+
+
+
             if (!once) {
                 if (currentLives > 1)
                 {
+                    PlayAudio(audioClips[2]);
                     currentLives--;
                     Debug.Log("Player Hit");
                     lives[currentLives].enabled = false;
@@ -147,10 +155,11 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
+                    PlayAudio(audioClips[2]);
                     currentLives--;
                     lives[currentLives].enabled = false;
                     Debug.Log("Player Dead");
-                    Destroy(other.gameObject);
+                   
                     deathPanel.SetActive(true);
                     Cursor.visible = true;
                     Time.timeScale = 0;
@@ -162,11 +171,61 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Pickup")
         {
             Debug.Log("Pickup");
+            PlayAudio(audioClips[1]);
             other.GetComponent<PickupController>().PickedUp();
             foreach (GameObject enemy in enemies)
             {
                 var enemyController = enemy.GetComponent<EnemyController>();
                 enemyController.SetPlayerAsTarget();
+                Debug.Log("Enemy goes to Player");
+                
+            }
+
+            if (points == 1)
+            {
+                foreach (GameObject enemy in enemies)
+                {
+                    var enemyController = enemy.GetComponent<EnemyController>();
+                   
+                    enemyController.agent.speed = 15;
+                    enemyController.GetComponent<EnemyController>().changeDirTime = 5;
+
+
+                }
+            }
+            else if (points == 2)
+            {
+                foreach (GameObject enemy in enemies)
+                {
+                    var enemyController = enemy.GetComponent<EnemyController>();
+                   
+                    enemyController.agent.speed = 25;
+                    enemyController.changeDirTime = 4;
+
+
+                }
+            }
+            else if (points == 3)
+            {
+                foreach (GameObject enemy in enemies)
+                {
+                    var enemyController = enemy.GetComponent<EnemyController>();
+                    
+                    enemyController.agent.speed = 35;
+                    enemyController.changeDirTime = 3;
+
+                }
+            }
+            else if (points == 4)
+            {
+                foreach (GameObject enemy in enemies)
+                {
+
+                    var enemyController = enemy.GetComponent<EnemyController>();
+                   
+                    enemyController.agent.speed = 45;
+                    enemyController.changeDirTime = 2;
+                }
             }
 
         }
@@ -182,54 +241,24 @@ public class PlayerController : MonoBehaviour
                     if (points < 4)
                     {
                         other.GetComponent<DeliveryPointController>().Delivered();
+                        PlayAudio(audioClips[0]);
+                        foreach (GameObject enemy in enemies)
+                        {
+                            var enemyController = enemy.GetComponent<EnemyController>();
+                            enemyController.ChangeDir();
+                            
+                        }
                     }
-                    
+                   
                     points++;
                     pointsText.text = "Score: " + points + " / 5";
-                    if (points == 1)
-                    {
-                        foreach (GameObject enemy in enemies)
-                        {
-                            var enemyController = enemy.GetComponent<EnemyController>();
-                            enemyController.agent.speed = 15;
-                            enemyController.GetComponent<EnemyController>().changeDirTime = 5;
-                            enemyController.ChangeDir();
-
-                        }
-                    }
-                    else if (points == 2)
-                    {
-                        foreach (GameObject enemy in enemies)
-                        {
-                            var enemyController = enemy.GetComponent<EnemyController>();
-                            enemyController.agent.speed = 25;
-                            enemyController.changeDirTime = 4;
-                            enemyController.ChangeDir();
-
-                        }
-                    }
-                    else if (points == 3)
-                    {
-                        foreach (GameObject enemy in enemies)
-                        {
-                            var enemyController = enemy.GetComponent<EnemyController>();
-                            enemyController.agent.speed = 35;
-                            enemyController.changeDirTime = 3;
-                            enemyController.ChangeDir();
-                        }
-                    }
-                    else if (points == 4)
-                    {
-                        foreach (GameObject enemy in enemies)
-                        {
-                            var enemyController = enemy.GetComponent<EnemyController>();
-                            enemyController.agent.speed = 45;
-                            enemyController.changeDirTime = 2;
-                        }
-                    }
+                    
+                   
+                   
                 }
                 else
                 {
+                   
                     winPanel.SetActive(true);
                     Cursor.visible = true;
                     Time.timeScale = 0;
@@ -240,6 +269,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    void PlayAudio(AudioClip clip)
+    {
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
 
     IEnumerator WaitAndDecreaseSpeed()
     {
