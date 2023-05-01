@@ -28,7 +28,10 @@ public class DeliveryController : MonoBehaviour
 
     public void NextPickup()
     {
-        currentPickupID = Random.Range(0, pickups.Length);
+        if (pickups.Length > 0) 
+        {
+            currentPickupID = Random.Range(0, pickups.Length);
+        }
         if (oldPickupIds.Contains(currentPickupID))
         {
             NextPickup();

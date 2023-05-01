@@ -13,7 +13,7 @@ public class PickupController : MonoBehaviour
     public void PickedUp()
     {
         deliveryPoint.SetActive(true);
-        Destroy(gameObject);    
+        gameObject.SetActive(false);
         //transform.GetChild(2).gameObject.SetActive(false);
     }
     

@@ -7,11 +7,15 @@ using UnityEngine.SceneManagement;
 public class EnemyController : MonoBehaviour
 {
     Vector3 randomTargetPos;
-    NavMeshAgent agent;
+    public NavMeshAgent agent;
+    public int changeDirTime = 5;
+    GameObject player;
+    bool chasePlayer = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         agent = GetComponent<NavMeshAgent>();
         StartCoroutine(WaitAndChangeDir());
         agent.speed = Random.Range(10,15);
@@ -20,22 +24,29 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (chasePlayer)
+        {
+            agent.SetDestination(player.transform.position);
+        }
     }
 
 
     IEnumerator WaitAndChangeDir()
     {
-        ChangeDir();
+        randomTargetPos = new Vector3(Random.Range(-500, 500), Random.Range(-500, 500), Random.Range(-500, 500));
+        agent.SetDestination(randomTargetPos);        
         yield return new WaitForSeconds(3);
-        StartCoroutine(WaitAndChangeDir());
+        ChangeDir();
+
 
     }
 
-    void ChangeDir()
+    public void ChangeDir()
     {
+        chasePlayer = false;
         randomTargetPos = new Vector3(Random.Range(-500, 500), Random.Range(-500, 500), Random.Range(-500, 500));
         agent.SetDestination(randomTargetPos);
+        StartCoroutine(WaitAndChangeDir());
     }
 
 
@@ -45,6 +56,13 @@ public class EnemyController : MonoBehaviour
         //{
         //    ChangeDir();
         //}
+    }
+
+    public void SetPlayerAsTarget()
+    {
+        StopAllCoroutines();
+        chasePlayer = true;
+        
     }
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,6 +27,11 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveDirection;
     public float speed;
     private float yRotation;
+    public int maxLives;
+    int currentLives;
+    public Image[] lives;
+    GameObject[] enemies;
+    
 
 
     // Start is called before the first frame update
@@ -39,6 +45,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         character = GetComponent<CharacterController>();
         Cursor.visible = false;
+        currentLives = maxLives;
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
     }
 
     void PlayerInput()
@@ -50,12 +58,12 @@ public class PlayerController : MonoBehaviour
 
     void PlayerMoveCharacterController()
     {
-        yRotation += horizontal;
+        yRotation += horizontal * Time.deltaTime * 60;
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
 
         moveDirection = moveDir.forward * vertical;
 
-
+        
         character.Move(moveDirection * speed * Time.deltaTime);
            
     }
@@ -105,9 +113,9 @@ public class PlayerController : MonoBehaviour
 
     //player controller 3d
 
-    
 
-    
+
+
     //Get mouse click position
     //void OnMouseDown()
     //{
@@ -120,35 +128,105 @@ public class PlayerController : MonoBehaviour
     //}
 
     //Get mouse click position on ground
+    bool once;
+
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy")
+        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Whale"))
         {
-            Debug.Log("Player Dead");
-            Destroy(other.gameObject);
-            deathPanel.SetActive(true);
-            Cursor.visible = true;
-            Time.timeScale = 0;
+            if (!once) {
+                if (currentLives > 1)
+                {
+                    currentLives--;
+                    Debug.Log("Player Hit");
+                    lives[currentLives].enabled = false;
+                    once = true;
+                    StartCoroutine(WaitAndReset());
+                   
+                }
+                else
+                {
+                    currentLives--;
+                    lives[currentLives].enabled = false;
+                    Debug.Log("Player Dead");
+                    Destroy(other.gameObject);
+                    deathPanel.SetActive(true);
+                    Cursor.visible = true;
+                    Time.timeScale = 0;
+                }
+            }
+           
             
         }
         if (other.gameObject.tag == "Pickup")
         {
             Debug.Log("Pickup");
             other.GetComponent<PickupController>().PickedUp();
-           
+            foreach (GameObject enemy in enemies)
+            {
+                var enemyController = enemy.GetComponent<EnemyController>();
+                enemyController.SetPlayerAsTarget();
+            }
+
         }
         if (other.gameObject.tag == "DeliveryPoint")
         {
             
             if (other.gameObject.activeSelf  && !other.GetComponent<DeliveryPointController>().delivered)
             {
-                Debug.Log("DeliveryPoint");
-                other.GetComponent<DeliveryPointController>().Delivered();
+                
+              
                 if (points < 5)
                 {
+                    if (points < 4)
+                    {
+                        other.GetComponent<DeliveryPointController>().Delivered();
+                    }
+                    
                     points++;
                     pointsText.text = "Score: " + points + " / 5";
+                    if (points == 1)
+                    {
+                        foreach (GameObject enemy in enemies)
+                        {
+                            var enemyController = enemy.GetComponent<EnemyController>();
+                            enemyController.agent.speed = 15;
+                            enemyController.GetComponent<EnemyController>().changeDirTime = 5;
+                            enemyController.ChangeDir();
+
+                        }
+                    }
+                    else if (points == 2)
+                    {
+                        foreach (GameObject enemy in enemies)
+                        {
+                            var enemyController = enemy.GetComponent<EnemyController>();
+                            enemyController.agent.speed = 25;
+                            enemyController.changeDirTime = 4;
+                            enemyController.ChangeDir();
+
+                        }
+                    }
+                    else if (points == 3)
+                    {
+                        foreach (GameObject enemy in enemies)
+                        {
+                            var enemyController = enemy.GetComponent<EnemyController>();
+                            enemyController.agent.speed = 35;
+                            enemyController.changeDirTime = 3;
+                            enemyController.ChangeDir();
+                        }
+                    }
+                    else if (points == 4)
+                    {
+                        foreach (GameObject enemy in enemies)
+                        {
+                            var enemyController = enemy.GetComponent<EnemyController>();
+                            enemyController.agent.speed = 45;
+                            enemyController.changeDirTime = 2;
+                        }
+                    }
                 }
                 else
                 {
@@ -167,5 +245,12 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         agent.speed = 15;
+    }
+
+
+    IEnumerator WaitAndReset()
+    {
+        yield return new WaitForSeconds(2);
+        once = false;
     }
 }
