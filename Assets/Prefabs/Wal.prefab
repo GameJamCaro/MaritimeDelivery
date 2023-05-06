@@ -71,6 +71,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 9083360013611967271}
   changeDirTime: 3
+  chasePlayer: 0
 --- !u!136 &6363026210740781492
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -81,10 +82,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 2
-  m_Height: 8
+  m_Radius: 1.7
+  m_Height: 6.5
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: -1.2}
+  m_Center: {x: 0, y: 0, z: -0.64}
 --- !u!1001 &9083360013977520023
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -165,8 +166,8 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 9083360013977520023}
   m_PrefabAsset: {fileID: 0}
---- !u!136 &7585135960078324566
-CapsuleCollider:
+--- !u!65 &4893220050644245028
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -175,10 +176,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.015
-  m_Height: 0.067
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.022529032, z: -0.0007106682}
+  serializedVersion: 2
+  m_Size: {x: 0.02, y: 0.055, z: 0.04}
+  m_Center: {x: -2.0278554e-17, y: 0.017, z: 0.008}
 --- !u!4 &8756170527672066172 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8cd697ed201616e488903c96bf21258f,

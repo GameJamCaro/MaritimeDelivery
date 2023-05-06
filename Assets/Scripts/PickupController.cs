@@ -14,7 +14,6 @@ public class PickupController : MonoBehaviour
     {
         deliveryPoint.SetActive(true);
         gameObject.SetActive(false);
-        //transform.GetChild(2).gameObject.SetActive(false);
     }
     
         

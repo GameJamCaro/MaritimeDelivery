@@ -41,11 +41,8 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator WaitAndChangeDir()
     {
-       
         yield return new WaitForSeconds(changeDirTime);
         ChangeDir();
-
-
     }
 
     public void ChangeDir()
@@ -70,7 +67,6 @@ public class EnemyController : MonoBehaviour
         //agent.SetDestination(player.transform.position);
         chasePlayer = true;
         Debug.Log("Enemy goes to Player");
-
     }
 
 

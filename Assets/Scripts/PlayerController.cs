@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
     GameObject[] enemies;
     public AudioSource audioSource;
     public AudioClip[] audioClips;
-
+    Vector3 tempPos;
 
 
     // Start is called before the first frame update
@@ -64,7 +64,6 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
 
         moveDirection = moveDir.forward * vertical;
-
         
         character.Move(moveDirection * speed * Time.deltaTime);
            
@@ -86,20 +85,8 @@ public class PlayerController : MonoBehaviour
 
         PlayerMoveCharacterController();
 
-
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        //    RaycastHit hit;
-
-        //    if (Physics.Raycast(ray, out hit))
-        //    {
-        //        targetDestination.transform.position = hit.point;
-        //        agent.SetDestination(hit.point);
-        //    }
-
-
-        //}
+       
+        
         if (Input.GetKey(KeyCode.LeftShift))
         {
             speed = 100;
@@ -113,23 +100,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    //player controller 3d
-
-
-
-
-    //Get mouse click position
-    //void OnMouseDown()
-    //{
-    //    Debug.Log("Mouse Clicked");
-    //    Vector3 mousePos = Input.mousePosition;
-    //    mousePos.z = 10;
-    //    Vector3 objectPos = Camera.main.ScreenToWorldPoint(mousePos);
-    //    Debug.Log(objectPos);
-    //    agent.SetDestination(objectPos);
-    //}
-
-    //Get mouse click position on ground
+    
     bool once;
 
 
@@ -137,11 +108,6 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Whale"))
         {
-
-          
-
-
-
             if (!once) {
                 if (currentLives > 1)
                 {
@@ -151,7 +117,6 @@ public class PlayerController : MonoBehaviour
                     lives[currentLives].enabled = false;
                     once = true;
                     StartCoroutine(WaitAndReset());
-                   
                 }
                 else
                 {
@@ -177,8 +142,6 @@ public class PlayerController : MonoBehaviour
             {
                 var enemyController = enemy.GetComponent<EnemyController>();
                 enemyController.SetPlayerAsTarget();
-                Debug.Log("Enemy goes to Player");
-                
             }
 
             if (points == 1)
@@ -189,8 +152,6 @@ public class PlayerController : MonoBehaviour
                    
                     enemyController.agent.speed = 15;
                     enemyController.GetComponent<EnemyController>().changeDirTime = 5;
-
-
                 }
             }
             else if (points == 2)
@@ -201,8 +162,6 @@ public class PlayerController : MonoBehaviour
                    
                     enemyController.agent.speed = 25;
                     enemyController.changeDirTime = 4;
-
-
                 }
             }
             else if (points == 3)
@@ -213,7 +172,6 @@ public class PlayerController : MonoBehaviour
                     
                     enemyController.agent.speed = 35;
                     enemyController.changeDirTime = 3;
-
                 }
             }
             else if (points == 4)
@@ -234,8 +192,6 @@ public class PlayerController : MonoBehaviour
             
             if (other.gameObject.activeSelf  && !other.GetComponent<DeliveryPointController>().delivered)
             {
-                
-              
                 if (points < 5)
                 {
                     if (points < 4)
@@ -246,26 +202,18 @@ public class PlayerController : MonoBehaviour
                         {
                             var enemyController = enemy.GetComponent<EnemyController>();
                             enemyController.ChangeDir();
-                            
                         }
                     }
-                   
                     points++;
                     pointsText.text = "Score: " + points + " / 5";
-                    
-                   
-                   
                 }
                 else
                 {
-                   
                     winPanel.SetActive(true);
                     Cursor.visible = true;
                     Time.timeScale = 0;
                 }
             }
-           
-           
         }
     }
 
